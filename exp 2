@@ -1,0 +1,84 @@
+import pandas as pd
+
+# Upload CSV file
+from google.colab import files
+uploaded = files.upload()
+
+# Read the CSV file
+filename = list(uploaded.keys())[0]
+data = pd.read_csv(filename)
+
+print("Training Data:")
+print(data)
+
+# Convert data into list
+training_data = data.values.tolist()
+
+# Number of attributes
+num_attributes = len(training_data[0]) - 1
+
+# Initialize Specific and General hypotheses
+S = ['0'] * num_attributes
+G = [['?'] * num_attributes]
+
+print("\nInitial S:", S)
+print("Initial G:", G)
+
+# Candidate Elimination Algorithm
+for example in training_data:
+
+    attributes = example[:-1]
+    target = example[-1]
+
+    # If example is positive
+    if target == "Yes":
+
+        # Remove inconsistent hypotheses from G
+        G = [g for g in G if all(
+            g[i] == '?' or g[i] == attributes[i]
+            for i in range(num_attributes)
+        )]
+
+        # Generalize S
+        for i in range(num_attributes):
+            if S[i] == '0':
+                S[i] = attributes[i]
+            elif S[i] != attributes[i]:
+                S[i] = '?'
+
+    # If example is negative
+    else:
+
+        # Specialize G
+        new_G = []
+
+        for g in G:
+            if all(g[i] == '?' or g[i] == attributes[i]
+                   for i in range(num_attributes)):
+
+                for i in range(num_attributes):
+                    if g[i] == '?':
+                        if S[i] != '?' and S[i] != '0':
+                            new_hypothesis = g.copy()
+                            new_hypothesis[i] = S[i]
+                            new_G.append(new_hypothesis)
+            else:
+                new_G.append(g)
+
+        G = new_G
+
+    print("\nExample:", example)
+    print("S =", S)
+    print("G =", G)
+
+# Final result
+print("\n==============================")
+print("FINAL VERSION SPACE")
+print("==============================")
+
+print("\nSpecific Boundary (S):")
+print(S)
+
+print("\nGeneral Boundary (G):")
+for g in G:
+    print(g)
