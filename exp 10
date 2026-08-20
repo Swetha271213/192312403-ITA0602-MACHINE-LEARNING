@@ -1,0 +1,43 @@
+# Expectation-Maximization (EM) Algorithm
+
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.mixture import GaussianMixture
+
+# Create sample data
+X = np.array([
+    [1], [2], [3], [4], [5],
+    [10], [11], [12], [13], [14]
+])
+
+# Create EM model
+model = GaussianMixture(
+    n_components=2,
+    random_state=42
+)
+
+# Train the model using EM algorithm
+model.fit(X)
+
+# Predict the cluster for each data point
+labels = model.predict(X)
+
+# Display results
+print("Data:")
+print(X.flatten())
+
+print("\nCluster Labels:")
+print(labels)
+
+print("\nCluster Means:")
+print(model.means_.flatten())
+
+print("\nCluster Covariances:")
+print(model.covariances_.flatten())
+
+# Plot the clusters
+plt.scatter(X, np.zeros(len(X)), c=labels)
+
+plt.xlabel("Data")
+plt.title("Expectation-Maximization Clustering")
+plt.show()
