@@ -1,0 +1,79 @@
+# Bank Loan Prediction using Naive Bayes
+
+import pandas as pd
+
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import GaussianNB
+from sklearn.metrics import accuracy_score, confusion_matrix
+
+# Create sample bank loan dataset
+data = {
+    'Age': [25, 30, 35, 40, 45, 50, 28, 32, 38, 42, 48, 55],
+    'Income': [25000, 30000, 45000, 50000, 60000, 70000,
+               28000, 40000, 55000, 65000, 75000, 80000],
+    'LoanAmount': [20000, 25000, 30000, 35000, 40000, 30000,
+                   25000, 30000, 35000, 40000, 45000, 35000],
+    'CreditScore': [550, 600, 650, 700, 750, 780,
+                    580, 630, 680, 720, 760, 800],
+    'Loan_Status': [
+        'No', 'No', 'Yes', 'Yes', 'Yes', 'Yes',
+        'No', 'Yes', 'Yes', 'Yes', 'Yes', 'Yes'
+    ]
+}
+
+# Convert data into DataFrame
+df = pd.DataFrame(data)
+
+print("Bank Loan Dataset:")
+print(df)
+
+# Input features
+X = df[['Age', 'Income', 'LoanAmount', 'CreditScore']]
+
+# Target
+y = df['Loan_Status']
+
+# Split data into training and testing data
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.25, random_state=42
+)
+
+# Create Naive Bayes model
+model = GaussianNB()
+
+# Train the model
+model.fit(X_train, y_train)
+
+# Predict test data
+y_pred = model.predict(X_test)
+
+# Display actual and predicted values
+print("\nActual Values:")
+print(y_test.values)
+
+print("\nPredicted Values:")
+print(y_pred)
+
+# Calculate accuracy
+accuracy = accuracy_score(y_test, y_pred)
+
+print("\nAccuracy:", accuracy * 100, "%")
+
+# Confusion Matrix
+cm = confusion_matrix(y_test, y_pred)
+
+print("\nConfusion Matrix:")
+print(cm)
+
+# Predict a new loan application
+new_customer = [[35, 50000, 30000, 700]]
+
+prediction = model.predict(new_customer)
+
+print("\nNew Customer Details:")
+print("Age = 35")
+print("Income = 50000")
+print("Loan Amount = 30000")
+print("Credit Score = 700")
+
+print("\nLoan Prediction:", prediction[0])
